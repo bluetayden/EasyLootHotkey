@@ -81,11 +81,17 @@ Function DebugLogLootableItems(ObjectReference akContainer)
     Debug.Notification(sItemNames)
 EndFunction
 
-bool Function ShouldLoot(Form akForm) 
+bool Function ShouldLoot(Form akForm)
+    ; TODO: Probably would be better to use akForm.HasKeyword(), and store the target keywords as script properties
+
     if akForm.GetName() == "gold" || \
        akForm.GetName() == "lockpick" || \
        akForm.HasKeywordString("VendorItemGem") || \
+       akForm.HasKeywordString("VendorItemOreIngot") || \
        akForm.HasKeywordString("VendorItemPotion") || \
+       akForm.HasKeywordString("ArmorJewelry") || \
+       akForm.HasKeywordString("VendorItemJewelry") || \
+       akForm.HasKeywordString("ClothingNecklace") || \
        akForm as SoulGem || \
        akForm as Key || \
        akForm as Scroll || \
@@ -95,4 +101,3 @@ bool Function ShouldLoot(Form akForm)
 
     return false
 EndFunction
-
