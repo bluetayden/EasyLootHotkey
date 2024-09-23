@@ -16,7 +16,7 @@ Event OnKeyDown(int keyCode)
     if keyCode != LootHotkey || !UI.IsMenuOpen(ContainerMenuName)
         return
     EndIf
-    
+
     ; Get the object the player was looking at before the ContainerMenu was opened. Assumes it's a container.
     ObjectReference kContainer = Game.GetCurrentCrosshairRef()
 
@@ -29,8 +29,8 @@ Function LootItems(ObjectReference akContainer)
     int iNumTotalTaken = 0
     int iFormIndex = akContainer.GetNumItems()
 
-	While iFormIndex > 0
-		iFormIndex -= 1
+    While iFormIndex > 0
+        iFormIndex -= 1
         Form kForm = akContainer.GetNthForm(iFormIndex)
 
         if ShouldLoot(kForm)
@@ -56,12 +56,12 @@ Function DebugLogLootableItems(ObjectReference akContainer)
     Int iNumItems = akContainer.GetNumItems()
 
     Int iFormIndex = iNumItems
-	While iFormIndex > 0
-		iFormIndex -= 1
+    While iFormIndex > 0
+        iFormIndex -= 1
         Form kForm = akContainer.GetNthForm(iFormIndex)
-        
+
         sItemNames += kForm.GetName() + " " + kForm.GetType() + " is "
-        
+
         if (ShouldLoot(kForm))
             sItemNames += "lootable"
         else
@@ -70,14 +70,14 @@ Function DebugLogLootableItems(ObjectReference akContainer)
 
         sItemNames += " | "
     EndWhile
-        
+
     Debug.Notification("Opened " + akContainer.GetDisplayName() + " container. " + iNumItems + "x items inside.")
     Debug.Notification(sItemNames)
 EndFunction
 
 bool Function ShouldLoot(Form akForm)
     string sFormName = akForm.GetName()
-    
+
     ; TODO: It would be better to use akForm.HasKeyword(), and store the target keywords as script properties/consts
     if sFormName == "gold" || \
        sFormName == "lockpick" || \
@@ -100,7 +100,7 @@ EndFunction
 bool Function IsDwarvenJunk(string sFormName)
     bool bIsDwarven = StringUtil.Find(sFormName, "Dwarven") != -1
     bool bIsDwemer = StringUtil.Find(sFormName, "Dwemer") != -1
-    
+
     if !bIsDwarven && !bIsDwemer
         ; The item isn't Dwarven
         return false
