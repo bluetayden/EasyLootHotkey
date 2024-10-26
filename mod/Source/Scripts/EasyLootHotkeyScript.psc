@@ -1,19 +1,25 @@
 Scriptname EasyLootHotkeyScript extends Quest  
-{Loots "common" items from the current container on pressing the 'T' key}
+{Loots "common" items from the current container on pressing a hotkey. Depends on configs from EasyLootHotkeySettings.}
 
-int Property LootHotkey = 20 Auto  ; 'T' key  
-int Property EscapeKey = 1 Auto  ; 'Esc' key  
-string Property ContainerMenuName = "ContainerMenu" Auto  
+; FIELDS ------------------------------------------------------------------------
 
-Sound Property GoldPickupSound Auto  
+; Constants
+int Property ESC_KEY = 1 AutoReadonly
+string Property CONTAINER_MENU_NAME = "ContainerMenu" AutoReadonly
+
+; Public
+EasyLootHotkeySettings Property SettingsInstance Auto
+Sound Property GoldPickupSound Auto
+
+; EVENTS ------------------------------------------------------------------------
 
 Event OnInit()
-    RegisterForKey(LootHotkey)
+    RegisterLootHotkey(SettingsInstance.LootHotkey)
 EndEvent
 
-Event OnKeyDown(int keyCode)
+Event OnKeyDown(int aiKeyCode)
     ; Don't do anything if the hotkey is wrong, or the ContainerMenu is not open
-    if keyCode != LootHotkey || !UI.IsMenuOpen(ContainerMenuName)
+    if ((aiKeyCode != SettingsInstance.LootHotkey) || (!UI.IsMenuOpen(CONTAINER_MENU_NAME)))
         return
     endif
 
@@ -24,16 +30,26 @@ Event OnKeyDown(int keyCode)
     LootItems(kContainer)
 EndEvent
 
+; FUNCTIONS ---------------------------------------------------------------------
+
+Function RegisterLootHotkey(int aiKeycode)
+    RegisterForKey(aiKeycode)
+EndFunction
+
+Function UnregisterLootHotkey(int aiKeycode)
+    UnregisterForKey(aiKeycode)
+EndFunction
+
 Function LootItems(ObjectReference akContainer)
     int iNumTypesTaken = 0
     int iNumTotalTaken = 0
     int iFormIndex = akContainer.GetNumItems()
 
-    while iFormIndex > 0
+    while (iFormIndex > 0)
         iFormIndex -= 1
         Form kForm = akContainer.GetNthForm(iFormIndex)
 
-        if ShouldLoot(kForm)
+        if (ShouldLoot(kForm))
             int iNumOfType = akContainer.GetItemCount(kForm)
             akContainer.RemoveItem(kForm, iNumOfType, true, Game.GetPlayer())
             iNumTypesTaken += 1
@@ -41,38 +57,16 @@ Function LootItems(ObjectReference akContainer)
         endif
     endwhile
 
-    ; Close the menu by simulating a press of the ESC key
-    Input.TapKey(EscapeKey)
-
     ; Show items that were taken (if any), and play a sound
-    if iNumTotalTaken > 0
+    if (iNumTotalTaken > 0)
         Debug.Notification("Looted " + iNumTypesTaken + " (x" + iNumTotalTaken + ") items from " + akContainer.GetDisplayName())
         GoldPickupSound.Play(Game.GetPlayer())
     endif
-EndFunction
 
-Function DebugLogLootableItems(ObjectReference akContainer)
-    string sItemNames = ""
-    int iNumItems = akContainer.GetNumItems()
-
-    int iFormIndex = iNumItems
-    while iFormIndex > 0
-        iFormIndex -= 1
-        Form kForm = akContainer.GetNthForm(iFormIndex)
-
-        sItemNames += kForm.GetName() + " " + kForm.GetType() + " is "
-
-        if (ShouldLoot(kForm))
-            sItemNames += "lootable"
-        else
-            sItemNames += "not lootable"
-        endif
-
-        sItemNames += " | "
-    endwhile
-
-    Debug.Notification("Opened " + akContainer.GetDisplayName() + " container. " + iNumItems + "x items inside.")
-    Debug.Notification(sItemNames)
+    ; Close the menu by simulating a press of the ESC key
+    if (SettingsInstance.CloseContainerOnLoot)
+        Input.TapKey(ESC_KEY)
+    endif
 EndFunction
 
 bool Function ShouldLoot(Form akForm)
@@ -98,10 +92,15 @@ bool Function ShouldLoot(Form akForm)
 EndFunction
 
 bool Function IsDwarvenJunk(string asFormName)
+    if (SettingsInstance.TakeDwarvenMetals)
+        ; If the user wants to loot Dwarven items, return false early
+        return false
+    endif
+
     bool bIsDwarven = StringUtil.Find(asFormName, "Dwarven") != -1
     bool bIsDwemer = StringUtil.Find(asFormName, "Dwemer") != -1
 
-    if !bIsDwarven && !bIsDwemer
+    if (!bIsDwarven && !bIsDwemer)
         ; The item isn't Dwarven
         return false
     endif
