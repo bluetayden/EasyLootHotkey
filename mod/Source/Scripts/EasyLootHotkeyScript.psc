@@ -15,7 +15,7 @@ Event OnKeyDown(int keyCode)
     ; Don't do anything if the hotkey is wrong, or the ContainerMenu is not open
     if keyCode != LootHotkey || !UI.IsMenuOpen(ContainerMenuName)
         return
-    EndIf
+    endif
 
     ; Get the object the player was looking at before the ContainerMenu was opened. Assumes it's a container.
     ObjectReference kContainer = Game.GetCurrentCrosshairRef()
@@ -29,7 +29,7 @@ Function LootItems(ObjectReference akContainer)
     int iNumTotalTaken = 0
     int iFormIndex = akContainer.GetNumItems()
 
-    While iFormIndex > 0
+    while iFormIndex > 0
         iFormIndex -= 1
         Form kForm = akContainer.GetNthForm(iFormIndex)
 
@@ -38,8 +38,8 @@ Function LootItems(ObjectReference akContainer)
             akContainer.RemoveItem(kForm, iNumOfType, true, Game.GetPlayer())
             iNumTypesTaken += 1
             iNumTotalTaken += iNumOfType
-        EndIf
-    EndWhile
+        endif
+    endwhile
 
     ; Close the menu by simulating a press of the ESC key
     Input.TapKey(EscapeKey)
@@ -48,15 +48,15 @@ Function LootItems(ObjectReference akContainer)
     if iNumTotalTaken > 0
         Debug.Notification("Looted " + iNumTypesTaken + " (x" + iNumTotalTaken + ") items from " + akContainer.GetDisplayName())
         GoldPickupSound.Play(Game.GetPlayer())
-    EndIf
+    endif
 EndFunction
 
 Function DebugLogLootableItems(ObjectReference akContainer)
-    String sItemNames = ""
-    Int iNumItems = akContainer.GetNumItems()
+    string sItemNames = ""
+    int iNumItems = akContainer.GetNumItems()
 
-    Int iFormIndex = iNumItems
-    While iFormIndex > 0
+    int iFormIndex = iNumItems
+    while iFormIndex > 0
         iFormIndex -= 1
         Form kForm = akContainer.GetNthForm(iFormIndex)
 
@@ -66,10 +66,10 @@ Function DebugLogLootableItems(ObjectReference akContainer)
             sItemNames += "lootable"
         else
             sItemNames += "not lootable"
-        EndIf
+        endif
 
         sItemNames += " | "
-    EndWhile
+    endwhile
 
     Debug.Notification("Opened " + akContainer.GetDisplayName() + " container. " + iNumItems + "x items inside.")
     Debug.Notification(sItemNames)
@@ -97,17 +97,17 @@ bool Function ShouldLoot(Form akForm)
     return false
 EndFunction
 
-bool Function IsDwarvenJunk(string sFormName)
-    bool bIsDwarven = StringUtil.Find(sFormName, "Dwarven") != -1
-    bool bIsDwemer = StringUtil.Find(sFormName, "Dwemer") != -1
+bool Function IsDwarvenJunk(string asFormName)
+    bool bIsDwarven = StringUtil.Find(asFormName, "Dwarven") != -1
+    bool bIsDwemer = StringUtil.Find(asFormName, "Dwemer") != -1
 
     if !bIsDwarven && !bIsDwemer
         ; The item isn't Dwarven
         return false
-    EndIf
+    endif
 
     ; There are a bunch of items under the "VendorItemOreIngot" Keyword that aren't actually ingots or ores.
     ; These include things like "Dwarven Scrap Metal" or "Large Decorative Dwemer Strut". So the easiest thing to do
     ; is just ignore everything except actual ingots.
-    return sFormName != "Dwarven Metal Ingot"
+    return asFormName != "Dwarven Metal Ingot"
 EndFunction
