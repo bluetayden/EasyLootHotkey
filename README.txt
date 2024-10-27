@@ -17,8 +17,18 @@ List of affected items:
 [*]Magic Scrolls 
 [*]Arrows (Ammo)
 [/list]
-[b][u]Installation
-[/u][/b]Install using MO2. Alternatively,  download the main file, drop it into your "[font=Courier New]Skyrim Special Edition/Data[/font]" directory, and extract the contents there.
-
-[b][u]Usage
-[/u][/b]Open a container in the game, and press the [font=Courier New]T[/font] key on your keyboard.
+[b][u]Requirements[/u][/b]
+[list]
+[*]SKSE64
+[*]SkyUI
+[/list]
+[b][u]Installation[/u][/b]
+[list]
+[*]Install using MO2.
+[*]Alternatively, download the main file, drop it into your "[font=Courier New]Skyrim Special Edition/Data[/font]" directory, and extract the contents there.
+[/list]
+[b][u]Usage[/u][/b]
+[list]
+[*]Open a container in the game, and press the [font=Courier New]T[/font] key on your keyboard. 
+[*]You can configure the hotkey used for looting, as well as a few other preferences using MCM. Pause the game ([font=Courier New]Esc[/font] key) and navigate to [font=Courier New]System > Mod Configuration > Easy Loot Hotkey[/font].
+[/list]
