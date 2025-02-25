@@ -32,3 +32,8 @@ List of affected items:
 [*]Open a container in the game, and press the [font=Courier New]T[/font] key on your keyboard. 
 [*]You can configure the hotkey used for looting, as well as a few other preferences using MCM. Pause the game ([font=Courier New]Esc[/font] key) and navigate to [font=Courier New]System > Mod Configuration > Easy Loot Hotkey[/font].
 [/list]
+[b][u]Source Code[/u][/b]
+[list]
+[*]The source for this mod can be found in the [font=Courier New]Source/Scripts[/font] directory of the main file. 
+[*]You can also find the [url=https://github.com/bluetayden/EasyLootHotkey]source on GitHub[/url].
+[/list]
