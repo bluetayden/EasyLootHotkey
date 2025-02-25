@@ -11,7 +11,7 @@ int Property DEFAULT_LOOT_HOTKEY = 20 AutoReadonly ; 'T' key
 ; Script Ref
 EasyLootHotkeyScript Property ScriptInstance Auto
 
-; Public Settings
+; Public
 bool Property CloseContainerOnLoot = true Auto
 
 bool Property TakeDwarvenMetals = false Auto
@@ -28,5 +28,5 @@ int Property LootHotkey
     EndFunction
 EndProperty
 
-; Private Settings
+; Private
 int _lootHotkey = 20

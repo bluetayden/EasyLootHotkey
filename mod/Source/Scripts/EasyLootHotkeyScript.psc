@@ -5,7 +5,8 @@ Scriptname EasyLootHotkeyScript extends Quest
 
 ; Constants
 int Property ESC_KEY = 1 AutoReadonly
-string Property CONTAINER_MENU_NAME = "ContainerMenu" AutoReadonly
+string Property CONTAINER_MENU_NAME = "ContainerMenu" AutoReadonly ; Vanilla Container Menu
+string Property QUICKLOOT_MENU_NAME = "LootMenu" AutoReadonly ; QuickLoot IE (Mod) Menu
 
 ; Public
 EasyLootHotkeySettings Property SettingsInstance Auto
@@ -18,16 +19,18 @@ Event OnInit()
 EndEvent
 
 Event OnKeyDown(int aiKeyCode)
-    ; Don't do anything if the hotkey is wrong, or the ContainerMenu is not open
-    if ((aiKeyCode != SettingsInstance.LootHotkey) || (!UI.IsMenuOpen(CONTAINER_MENU_NAME)))
+    bool bIsQuickLootOpen = UI.IsMenuOpen(QUICKLOOT_MENU_NAME)
+
+    ; Return early if the hotkey is wrong, or a container menu is not open
+    if ((aiKeyCode != SettingsInstance.LootHotkey) || !(UI.IsMenuOpen(CONTAINER_MENU_NAME) || bIsQuickLootOpen))
         return
     endif
 
-    ; Get the object the player was looking at before the ContainerMenu was opened. Assumes it's a container.
+    ; Get the object the player was looking at before the container menu was opened. Assumes it's a container.
     ObjectReference kContainer = Game.GetCurrentCrosshairRef()
 
     ; Take the relevant items
-    LootItems(kContainer)
+    LootItems(kContainer, bIsQuickLootOpen)
 EndEvent
 
 ; FUNCTIONS ---------------------------------------------------------------------
@@ -40,16 +43,18 @@ Function UnregisterLootHotkey(int aiKeycode)
     UnregisterForKey(aiKeycode)
 EndFunction
 
-Function LootItems(ObjectReference akContainer)
+Function LootItems(ObjectReference akContainer, bool abQuickLootWasOpen)
     int iNumTypesTaken = 0
     int iNumTotalTaken = 0
     int iFormIndex = akContainer.GetNumItems()
 
+    ; Iterate over all items in the container
     while (iFormIndex > 0)
         iFormIndex -= 1
         Form kForm = akContainer.GetNthForm(iFormIndex)
 
         if (ShouldLoot(kForm))
+            ; And move them into the player's inventory if relevant
             int iNumOfType = akContainer.GetItemCount(kForm)
             akContainer.RemoveItem(kForm, iNumOfType, true, Game.GetPlayer())
             iNumTypesTaken += 1
@@ -57,14 +62,17 @@ Function LootItems(ObjectReference akContainer)
         endif
     endwhile
 
-    ; Show items that were taken (if any), and play a sound
     if (iNumTotalTaken > 0)
+        ; Show items that were taken (if any), and play a sound
         Debug.Notification("Looted " + iNumTypesTaken + " (x" + iNumTotalTaken + ") items from " + akContainer.GetDisplayName())
         GoldPickupSound.Play(Game.GetPlayer())
+    else
+        Debug.Notification("No relevant items were found in " + akContainer.GetDisplayName())
     endif
 
-    ; Close the menu by simulating a press of the ESC key
-    if (SettingsInstance.CloseContainerOnLoot)
+    ; Close the container menu by simulating a press of the ESC key. Note: the QuickLoot mod has a menu that runs
+    ; "in-world", so we skip in that case, because trying to close it would just open the pause menu.
+    if (SettingsInstance.CloseContainerOnLoot && !abQuickLootWasOpen)
         Input.TapKey(ESC_KEY)
     endif
 EndFunction

@@ -4,7 +4,7 @@ Scriptname EasyLootHotkeyMCM extends SKI_ConfigBase
 ; SCRIPT VERSION ------------------------------------------------------------------------
 
 int Function GetVersion()
-    return 5
+    return 6
 EndFunction
 
 ; PROPERTIES ----------------------------------------------------------------------------
@@ -81,6 +81,6 @@ Event OnOptionHighlight(int aiOption)
     elseif (aiOption == _takeDwarvenMetalsOID_B)
         SetInfoText("Whether Dwarven metals besides 'Dwarven Metal Ingot' should be taken from containers e.g. 'Dwarven Scrap Metal'.\nDefault: false")
     elseif (aiOption == _closeContainerOnLootOID_B)
-        SetInfoText("Whether a container menu should be automatically closed after looting is complete.\nDefault: true")
+        SetInfoText("Whether container menus should be automatically closed after looting is complete. This only applies to the vanilla menu.\nDefault: true")
     endif
 EndEvent
