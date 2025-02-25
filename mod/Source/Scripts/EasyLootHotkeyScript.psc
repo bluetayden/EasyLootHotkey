@@ -7,6 +7,7 @@ Scriptname EasyLootHotkeyScript extends Quest
 int Property ESC_KEY = 1 AutoReadonly
 string Property CONTAINER_MENU_NAME = "ContainerMenu" AutoReadonly ; Vanilla Container Menu
 string Property QUICKLOOT_MENU_NAME = "LootMenu" AutoReadonly ; QuickLoot IE (Mod) Menu
+string Property CONSOLE_MENU_NAME = "Console" AutoReadonly ; QuickLoot IE (Mod) Menu
 
 ; Public
 EasyLootHotkeySettings Property SettingsInstance Auto
@@ -19,10 +20,12 @@ Event OnInit()
 EndEvent
 
 Event OnKeyDown(int aiKeyCode)
-    bool bIsQuickLootOpen = UI.IsMenuOpen(QUICKLOOT_MENU_NAME)
+    bool bIsQuickLootMenuOpen = UI.IsMenuOpen(QUICKLOOT_MENU_NAME)
+    bool bIsContainerMenuOpen = UI.IsMenuOpen(CONTAINER_MENU_NAME) || bIsQuickLootMenuOpen
+    bool bIsBlocklistedMenuOpen = UI.IsMenuOpen(CONSOLE_MENU_NAME)
 
     ; Return early if the hotkey is wrong, or a container menu is not open
-    if ((aiKeyCode != SettingsInstance.LootHotkey) || !(UI.IsMenuOpen(CONTAINER_MENU_NAME) || bIsQuickLootOpen))
+    if ((aiKeyCode != SettingsInstance.LootHotkey) || !bIsContainerMenuOpen || bIsBlocklistedMenuOpen)
         return
     endif
 
@@ -30,7 +33,7 @@ Event OnKeyDown(int aiKeyCode)
     ObjectReference kContainer = Game.GetCurrentCrosshairRef()
 
     ; Take the relevant items
-    LootItems(kContainer, bIsQuickLootOpen)
+    LootItems(kContainer, bIsQuickLootMenuOpen)
 EndEvent
 
 ; FUNCTIONS ---------------------------------------------------------------------
@@ -43,7 +46,7 @@ Function UnregisterLootHotkey(int aiKeycode)
     UnregisterForKey(aiKeycode)
 EndFunction
 
-Function LootItems(ObjectReference akContainer, bool abQuickLootWasOpen)
+Function LootItems(ObjectReference akContainer, bool abQuickLootMenuWasOpen)
     int iNumTypesTaken = 0
     int iNumTotalTaken = 0
     int iFormIndex = akContainer.GetNumItems()
@@ -72,7 +75,7 @@ Function LootItems(ObjectReference akContainer, bool abQuickLootWasOpen)
 
     ; Close the container menu by simulating a press of the ESC key. Note: the QuickLoot mod has a menu that runs
     ; "in-world", so we skip in that case, because trying to close it would just open the pause menu.
-    if (SettingsInstance.CloseContainerOnLoot && !abQuickLootWasOpen)
+    if (SettingsInstance.CloseContainerOnLoot && !abQuickLootMenuWasOpen)
         Input.TapKey(ESC_KEY)
     endif
 EndFunction
