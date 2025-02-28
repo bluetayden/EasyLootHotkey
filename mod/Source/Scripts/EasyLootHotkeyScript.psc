@@ -96,6 +96,7 @@ bool Function ShouldLoot(Form akForm)
        akForm.HasKeywordString("ArmorJewelry") || \
        akForm.HasKeywordString("VendorItemJewelry") || \
        akForm.HasKeywordString("ClothingNecklace") || \
+       akForm.HasKeywordString("ClothingRing") || \
        akForm as SoulGem || \
        akForm as Key || \
        akForm as Scroll || \

@@ -13,7 +13,7 @@ List of affected items:
 - Gems (VendorItemGem)
 - Ores and Ingots (VendorItemOreIngot)
 - Potions (VendorItemPotion)
-- Amulets, Necklaces and Rings (ArmorJewelry, VendorItemJewelry, ClothingNecklace)
+- Amulets, Necklaces and Rings (ArmorJewelry, VendorItemJewelry, ClothingNecklace, ClothingRing)
 - Soul Gems
 - Keys
 - Magic Scrolls
