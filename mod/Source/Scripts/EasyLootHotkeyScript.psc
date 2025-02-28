@@ -5,9 +5,14 @@ Scriptname EasyLootHotkeyScript extends Quest
 
 ; Constants
 int Property ESC_KEY = 1 AutoReadonly
+
 string Property CONTAINER_MENU_NAME = "ContainerMenu" AutoReadonly ; Vanilla Container Menu
 string Property QUICKLOOT_MENU_NAME = "LootMenu" AutoReadonly ; QuickLoot IE (Mod) Menu
 string Property CONSOLE_MENU_NAME = "Console" AutoReadonly ; QuickLoot IE (Mod) Menu
+
+int Property FORM_ID_GOLD = 0x0000000F AutoReadonly
+int Property FORM_ID_LOCKPICK = 0x0000000A AutoReadonly
+int Property FORM_ID_DWARVEN_METAL_INGOT = 0x000DB8A2 AutoReadonly
 
 ; Public
 EasyLootHotkeySettings Property SettingsInstance Auto
@@ -81,11 +86,10 @@ Function LootItems(ObjectReference akContainer, bool abQuickLootMenuWasOpen)
 EndFunction
 
 bool Function ShouldLoot(Form akForm)
-    string sFormName = akForm.GetName()
+    int iFormId = akForm.GetFormID()
 
-    ; TODO: It would be better to use akForm.HasKeyword(), and store the target keywords as script properties/consts
-    if sFormName == "gold" || \
-       sFormName == "lockpick" || \
+    if iFormId == FORM_ID_GOLD || \
+       iFormId == FORM_ID_LOCKPICK || \
        akForm.HasKeywordString("VendorItemGem") || \
        akForm.HasKeywordString("VendorItemPotion") || \
        akForm.HasKeywordString("ArmorJewelry") || \
@@ -95,21 +99,24 @@ bool Function ShouldLoot(Form akForm)
        akForm as Key || \
        akForm as Scroll || \
        akForm as Ammo || \
-       (akForm.HasKeywordString("VendorItemOreIngot") && !IsDwarvenJunk(sFormName))
+       (akForm.HasKeywordString("VendorItemOreIngot") && !IsDwarvenJunk(akForm))
         return true
     EndIf
 
     return false
 EndFunction
 
-bool Function IsDwarvenJunk(string asFormName)
+bool Function IsDwarvenJunk(Form akForm)
     if (SettingsInstance.TakeDwarvenMetals)
-        ; If the user wants to loot Dwarven items, return false early
+        ; If the user wants to loot Dwarven metals, return false early
         return false
     endif
 
-    bool bIsDwarven = StringUtil.Find(asFormName, "Dwarven") != -1
-    bool bIsDwemer = StringUtil.Find(asFormName, "Dwemer") != -1
+    
+    ; TODO: This probably won't work for game languages other than English since form names will not match
+    string sFormName = akForm.GetName()
+    bool bIsDwarven = StringUtil.Find(sFormName, "Dwarven") != -1
+    bool bIsDwemer = StringUtil.Find(sFormName, "Dwemer") != -1
 
     if (!bIsDwarven && !bIsDwemer)
         ; The item isn't Dwarven
@@ -119,5 +126,5 @@ bool Function IsDwarvenJunk(string asFormName)
     ; There are a bunch of items under the "VendorItemOreIngot" Keyword that aren't actually ingots or ores.
     ; These include things like "Dwarven Scrap Metal" or "Large Decorative Dwemer Strut". So the easiest thing to do
     ; is just ignore everything except actual ingots.
-    return asFormName != "Dwarven Metal Ingot"
+    return akForm.GetFormID() != FORM_ID_DWARVEN_METAL_INGOT
 EndFunction
