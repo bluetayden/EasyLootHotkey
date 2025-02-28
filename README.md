@@ -5,6 +5,8 @@ This is a small script that becomes active whenever you're inspecting a containe
 
 Most of the time when you're looting in a dungeon, you don't need to pick up anything other than valuables and consumables from containers. So this hopefully covers most of those cases.
 
+**Note:** This script is only really meant to be used on containers with a small amount of items. It slows down considerably (or just breaks) if you're working with a lot of them.
+
 List of affected items:
 - Gold
 - Lockpicks
@@ -16,6 +18,9 @@ List of affected items:
 - Keys
 - Magic Scrolls
 - Arrows (Ammo)
+
+## Version Compatibility
+This mod has only been tested for **Skyrim SE 1.6.1170**. It may not work with other versions.
 
 ## Requirements
 - SKSE64
