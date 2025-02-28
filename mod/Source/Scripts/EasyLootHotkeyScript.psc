@@ -13,6 +13,7 @@ string Property CONSOLE_MENU_NAME = "Console" AutoReadonly ; QuickLoot IE (Mod) 
 int Property FORM_ID_GOLD = 0x0000000F AutoReadonly
 int Property FORM_ID_LOCKPICK = 0x0000000A AutoReadonly
 int Property FORM_ID_DWARVEN_METAL_INGOT = 0x000DB8A2 AutoReadonly
+int Property FORM_ID_FLAWLESS_AMETHYST = 0x0006851E AutoReadonly
 
 ; Public
 EasyLootHotkeySettings Property SettingsInstance Auto
@@ -90,7 +91,7 @@ bool Function ShouldLoot(Form akForm)
 
     if iFormId == FORM_ID_GOLD || \
        iFormId == FORM_ID_LOCKPICK || \
-       akForm.HasKeywordString("VendorItemGem") || \
+       IsGem(akForm) || \
        akForm.HasKeywordString("VendorItemPotion") || \
        akForm.HasKeywordString("ArmorJewelry") || \
        akForm.HasKeywordString("VendorItemJewelry") || \
@@ -104,6 +105,11 @@ bool Function ShouldLoot(Form akForm)
     EndIf
 
     return false
+EndFunction
+
+bool Function IsGem(Form akForm)
+    ; Usually all gems are under the "VendorItemGem" keyword, except for "Flawless Amethyst"
+    return akForm.HasKeywordString("VendorItemGem") || akForm.GetFormID() == FORM_ID_FLAWLESS_AMETHYST
 EndFunction
 
 bool Function IsDwarvenJunk(Form akForm)
