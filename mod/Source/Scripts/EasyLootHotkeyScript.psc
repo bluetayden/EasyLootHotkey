@@ -7,8 +7,8 @@ Scriptname EasyLootHotkeyScript extends Quest
 int Property ESC_KEY = 1 AutoReadonly
 
 string Property CONTAINER_MENU_NAME = "ContainerMenu" AutoReadonly ; Vanilla Container Menu
+string Property CONSOLE_MENU_NAME = "Console" AutoReadonly ; Vanilla Debug Console Menu
 string Property QUICKLOOT_MENU_NAME = "LootMenu" AutoReadonly ; QuickLoot IE (Mod) Menu
-string Property CONSOLE_MENU_NAME = "Console" AutoReadonly ; QuickLoot IE (Mod) Menu
 
 int Property FORM_ID_GOLD = 0x0000000F AutoReadonly
 int Property FORM_ID_LOCKPICK = 0x0000000A AutoReadonly
@@ -119,7 +119,6 @@ bool Function IsDwarvenJunk(Form akForm)
         return false
     endif
 
-    
     ; TODO: This probably won't work for game languages other than English since form names will not match
     string sFormName = akForm.GetName()
     bool bIsDwarven = StringUtil.Find(sFormName, "Dwarven") != -1

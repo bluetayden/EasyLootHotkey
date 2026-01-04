@@ -4,7 +4,7 @@ Scriptname EasyLootHotkeyMCM extends SKI_ConfigBase
 ; SCRIPT VERSION ------------------------------------------------------------------------
 
 int Function GetVersion()
-    return 6
+    return 7
 EndFunction
 
 ; PROPERTIES ----------------------------------------------------------------------------
